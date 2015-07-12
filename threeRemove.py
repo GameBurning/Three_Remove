@@ -2,7 +2,10 @@ __author__ = 'gaoboning'
 import random
 
 letters = ['A','B','C','D']
-#diamondTable = []
+diamondTable = []
+
+#test case
+'''
 diamondTable =  [['C', 'D', 'D', 'B', 'B', 'C', 'A', 'B', 'B', 'A'],
                  ['A', 'C', 'B', 'C', 'D', 'B', 'A', 'B', 'B', 'B'],
                  ['D', 'B', 'C', 'D', 'B', 'A', 'A', 'C', 'B', 'A'],
@@ -13,29 +16,17 @@ diamondTable =  [['C', 'D', 'D', 'B', 'B', 'C', 'A', 'B', 'B', 'A'],
                  ['D', 'B', 'D', 'A', 'C', 'D', 'C', 'A', 'C', 'C'],
                  ['A', 'D', 'C', 'A', 'B', 'B', 'C', 'D', 'D', 'D'],
                  ['D', 'B', 'C', 'A', 'A', 'D', 'B', 'B', 'D', 'A']]
-resultTable = [] #result of horizon match
+'''
 
-# diamondTable = [
-#     [0,0,0,0,0,0,0],
-#     [0,0,0,0,0,0,0],
-#     [0,0,0,0,0,0,0],
-#     [0,0,0,0,0,0,0],
-#     [0,0,0,0,0,0,0],
-# ]
-
-
+#initial the diamond table
 def initTable(n):
     global N
     N = n
     for i in range(0, n):
         tmp = []
-        zeros = []
         for j in range(0, n):
             tmp.append(letters[random.randint(0,3)])
-            zeros.append(0)
         diamondTable.append(tmp)
-        resultTable.append(zeros)
-
 
 def printTable(table):
     for i in range(0, len(table)):
@@ -44,9 +35,8 @@ def printTable(table):
         print '\n',
 
 
-
+#detect the 'threes'
 def detectTable(setlist):
-    N = 10
     if(len(diamondTable) == 0):
         print "Table not initial successfully!"
     else:
@@ -62,20 +52,9 @@ def detectTable(setlist):
                                 matchset.add((i,t))
                             else:
                                 break
-
-                        # repeat = 0
-                        # for w in setlist:
-                        #     if matchset & w != set([]):
-                        #         setlist.remove(w)
-                        #         matchset = matchset | w
-                        #
-                        #         repeat = 1
-                        # if repeat == 0:
-                        #     setlist.append(matchset)
                         removeRepeat(matchset, setlist)
 
                 #detect the vertical match
-
                 if i < N - 2:
                     (a, b, c) = (diamondTable[i][j], diamondTable[i+1][j], diamondTable[i+2][j])
                     if a == b and b == c:
@@ -85,17 +64,10 @@ def detectTable(setlist):
                                 matchset.add((t,j))
                             else:
                                 break
-
-                        # repeat = 0
-                        # for w in setlist:
-                        #     if matchset & w != set([]):
-                        #         setlist.append(w | matchset)
-                        #         setlist.remove(w)
-                        #         repeat = 1
-                        # if repeat == 0:
-                        #     setlist.append(matchset)
                         removeRepeat(matchset, setlist)
 
+
+#a recursive function, which adds a set to the list of match sets, and merge it with previous set with same node
 def removeRepeat(set_i, list_i):
     repeat = 0
     for w in list_i:
@@ -103,19 +75,22 @@ def removeRepeat(set_i, list_i):
             set_i |= w
             list_i.remove(w)
             repeat = 1
-        if(removeRepeat(set_i,list_i) == 0):
-            list_i.append(set_i)
+            removeRepeat(set_i,list_i)
+    if(repeat == 0):
+        list_i.append(set_i);
+        return
     return repeat
 
 
-
-#initTable(10)
-print"\n-----------Diam-----------\n"
-printTable( diamondTable)
-set_temp = []
-detectTable(set_temp)
-for w in set_temp:
-    print w,
-    position = w.pop()
-    print diamondTable[position[0]][position[1]]
-
+#main entry:
+if __name__ == "__main__":
+    row=input("Please input the number of rows and columns: \n")
+    initTable(row)
+    print"\n-----------Diam-----------\n"
+    printTable( diamondTable)
+    set_temp = []
+    detectTable(set_temp)
+    for w in set_temp:
+        print w,
+        position = w.pop()
+        print diamondTable[position[0]][position[1]]
